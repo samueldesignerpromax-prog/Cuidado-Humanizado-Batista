@@ -132,10 +132,16 @@ document.getElementById('loginFuncionarioForm').addEventListener('submit', async
     const data = await res.json();
 
     if (res.ok) {
+      // Verifica se o usuário é funcionário
+      if (data.user.role !== 'funcionario') {
+        msg.innerHTML = '<span style="color:#e74c3c;">❌ Esta área é exclusiva para funcionários.</span>';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+        return;
+      }
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-
-      // ✅ REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
       msg.innerHTML = '<span style="color:#2ecc71;">✅ Login bem-sucedido!</span>';
       setTimeout(() => {
         window.location.href = 'dashboard-funcionario.html';
