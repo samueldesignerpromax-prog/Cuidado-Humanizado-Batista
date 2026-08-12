@@ -21,6 +21,8 @@
     .login-box .link-register { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--cinza-claro-texto); }
     .login-box .link-register a { color: var(--azul-medio); text-decoration: none; font-weight: 600; }
     #loginMensagem { margin-top: 12px; text-align: center; font-weight: 600; }
+    .btn-voltar { display: inline-block; margin-top: 12px; color: var(--cinza-claro-texto); text-decoration: none; font-size: 0.9rem; }
+    .btn-voltar:hover { color: var(--azul-medio); }
   </style>
 </head>
 <body>
@@ -67,6 +69,9 @@
       </form>
       <div class="link-register">
         <a href="registrar-funcionario.html">Ainda não tem conta? Cadastre-se</a>
+      </div>
+      <div style="text-align:center; margin-top:12px;">
+        <a href="index.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar ao site</a>
       </div>
     </div>
   </div>
@@ -132,7 +137,7 @@ document.getElementById('loginFuncionarioForm').addEventListener('submit', async
     const data = await res.json();
 
     if (res.ok) {
-      // Verifica se o usuário é funcionário
+      // VERIFICA SE É FUNCIONÁRIO
       if (data.user.role !== 'funcionario') {
         msg.innerHTML = '<span style="color:#e74c3c;">❌ Esta área é exclusiva para funcionários.</span>';
         btn.disabled = false;
