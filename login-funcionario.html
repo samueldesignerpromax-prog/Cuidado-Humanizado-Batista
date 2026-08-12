@@ -54,12 +54,20 @@
       <h2>👤 Login Funcionário</h2>
       <p class="subtitle">Acesse sua área pessoal</p>
       <form id="loginFuncionarioForm">
-        <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail" placeholder="seu@email.com" required></div>
-        <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" placeholder="********" required></div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" placeholder="********" required>
+        </div>
         <button type="submit" class="btn-login" id="btnLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
         <div id="loginMensagem"></div>
       </form>
-      <div class="link-register"><a href="registrar-funcionario.html">Ainda não tem conta? Cadastre-se</a></div>
+      <div class="link-register">
+        <a href="registrar-funcionario.html">Ainda não tem conta? Cadastre-se</a>
+      </div>
     </div>
   </div>
 </section>
@@ -97,19 +105,66 @@
 
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
+
 document.getElementById('loginFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim(), password = document.getElementById('loginPassword').value.trim(), msg = document.getElementById('loginMensagem'), btn = document.getElementById('btnLogin');
-  if (!email || !password) { msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos.</span>'; return; }
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...'; msg.innerHTML = '';
+
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  const msg = document.getElementById('loginMensagem');
+  const btn = document.getElementById('btnLogin');
+
+  if (!email || !password) {
+    msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos.</span>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+  msg.innerHTML = '';
+
   try {
-    const res = await fetch(`${API_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
     const data = await res.json();
-    if (res.ok) { localStorage.setItem('token', data.token); localStorage.setItem('user', JSON.stringify(data.user)); msg.innerHTML = '<span style="color:#2ecc71;">✅ Login bem-sucedido!</span>'; setTimeout(() => { window.location.href = 'dashboard-funcionario.html'; }, 1000); } else { msg.innerHTML = `<span style="color:#e74c3c;">❌ ${data.message || 'Erro no login'}</span>`; }
-  } catch (err) { msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>'; } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar'; }
+
+    if (res.ok) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // ✅ REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
+      msg.innerHTML = '<span style="color:#2ecc71;">✅ Login bem-sucedido!</span>';
+      setTimeout(() => {
+        window.location.href = 'dashboard-funcionario.html';
+      }, 1000);
+    } else {
+      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${data.message || 'Erro no login'}</span>`;
+    }
+  } catch (err) {
+    console.error('Erro:', err);
+    msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+  }
 });
-const hamburger = document.querySelector('.hamburger'); const navLinks = document.querySelector('.nav-links');
-if (hamburger && navLinks) { hamburger.addEventListener('click', function() { navLinks.classList.toggle('active'); const icon = this.querySelector('i'); if (icon) { icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); } }); }
+
+// ===== MENU MOBILE =====
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+    const icon = this.querySelector('i');
+    if (icon) {
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    }
+  });
+}
 </script>
 </body>
 </html>
