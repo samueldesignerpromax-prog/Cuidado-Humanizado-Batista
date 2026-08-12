@@ -24,7 +24,10 @@
     .register-box .btn-cadastrar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .register-box .link-login { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--cinza-claro-texto); }
     .register-box .link-login a { color: var(--azul-medio); text-decoration: none; font-weight: 600; }
-    #cadastroMensagem { margin-top: 12px; text-align: center; font-weight: 600; }
+    #cadastroMensagem { margin-top: 12px; text-align: center; font-weight: 600; padding: 10px; border-radius: 8px; }
+    #cadastroMensagem.sucesso { background: #eafaf1; color: #27ae60; }
+    #cadastroMensagem.erro { background: #fdedec; color: #e74c3c; }
+    #cadastroMensagem.carregando { background: #ebf5fb; color: #2980b9; }
     .select-funcionario { width: 100%; padding: 10px 14px; border: 1px solid var(--cinza-borda); border-radius: 8px; font-size: 1rem; background: var(--branco); }
     .select-funcionario:focus { border-color: var(--azul-medio); outline: none; }
   </style>
@@ -114,7 +117,7 @@
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
 
-// ===== CADASTRO DE FUNCIONÁRIO (USANDO ROTA PÚBLICA) =====
+// ===== CADASTRO DE FUNCIONÁRIO (COM LOGIN AUTOMÁTICO) =====
 document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -136,14 +139,17 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   const msg = document.getElementById('cadastroMensagem');
   const btn = document.getElementById('btnCadastrar');
 
+  // Validação
   if (!nome || !email || !senha || !idade || !telefone || !descricao) {
-    msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>';
+    msg.className = 'erro';
+    msg.innerHTML = '⚠️ Preencha todos os campos obrigatórios.';
     return;
   }
 
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
-  msg.innerHTML = '';
+  msg.className = 'carregando';
+  msg.innerHTML = '⏳ Criando seu cadastro...';
 
   try {
     // PASSO 1: Criar o usuário (role: funcionario)
@@ -160,13 +166,16 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     const userData = await userRes.json();
 
     if (!userRes.ok) {
-      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`;
+      msg.className = 'erro';
+      msg.innerHTML = `❌ ${userData.message || userData.error}`;
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
       return;
     }
 
-    // PASSO 2: Cadastrar as informações do funcionário (USANDO A ROTA PÚBLICA)
+    msg.innerHTML = '✅ Usuário criado! Cadastrando perfil...';
+
+    // PASSO 2: Cadastrar as informações do funcionário (rota pública)
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -182,18 +191,47 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     });
     const funcData = await funcRes.json();
 
-    if (funcRes.ok) {
-      msg.innerHTML = '<span style="color:#2ecc71;">✅ Cadastro realizado com sucesso! Faça login.</span>';
-      document.getElementById('cadastroFuncionarioForm').reset();
-      setTimeout(() => {
-        window.location.href = 'login-funcionario.html';
-      }, 2000);
-    } else {
-      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`;
+    if (!funcRes.ok) {
+      msg.className = 'erro';
+      msg.innerHTML = `❌ ${funcData.message || funcData.error}`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
     }
+
+    // PASSO 3: Login automático
+    msg.innerHTML = '✅ Perfil cadastrado! Entrando...';
+    const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha })
+    });
+    const loginData = await loginRes.json();
+
+    if (!loginRes.ok) {
+      msg.className = 'erro';
+      msg.innerHTML = `❌ Cadastro feito, mas erro ao fazer login: ${loginData.message}`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
+    }
+
+    // SALVA TOKEN E USUÁRIO
+    localStorage.setItem('token', loginData.token);
+    localStorage.setItem('user', JSON.stringify(loginData.user));
+
+    msg.className = 'sucesso';
+    msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
+
+    // REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
+    setTimeout(() => {
+      window.location.href = 'dashboard-funcionario.html';
+    }, 1500);
+
   } catch (err) {
     console.error('Erro:', err);
-    msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API. Verifique sua internet.</span>';
+    msg.className = 'erro';
+    msg.innerHTML = '❌ Erro ao conectar com a API. Verifique sua internet.';
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
