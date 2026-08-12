@@ -145,7 +145,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '';
 
   try {
-    // PASSO 1: Criar o usuário
+    // PASSO 1: Criar o usuário com role: funcionario
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -182,7 +182,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
 
     const token = loginData.token;
 
-    // PASSO 3: Cadastrar informações do funcionário (COM TOKEN)
+    // PASSO 3: Cadastrar informações do funcionário
     const funcRes = await fetch(`${API_URL}/api/funcionarios`, {
       method: 'POST',
       headers: {
