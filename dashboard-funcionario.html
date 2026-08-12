@@ -111,6 +111,7 @@ async function verificarAutenticacao() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   
+  // 🔥 SE NÃO FOR FUNCIONÁRIO, VAI PARA O LOGIN
   if (!token || user.role !== 'funcionario') {
     window.location.href = 'login-funcionario.html';
     return;
