@@ -117,7 +117,7 @@
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
 
-// ===== CADASTRO DE FUNCIONÁRIO (COM LOGIN AUTOMÁTICO) =====
+// ===== CADASTRO DE FUNCIONÁRIO COM LOGIN AUTOMÁTICO =====
 document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -139,7 +139,6 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   const msg = document.getElementById('cadastroMensagem');
   const btn = document.getElementById('btnCadastrar');
 
-  // Validação
   if (!nome || !email || !senha || !idade || !telefone || !descricao) {
     msg.className = 'erro';
     msg.innerHTML = '⚠️ Preencha todos os campos obrigatórios.';
@@ -152,7 +151,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '⏳ Criando seu cadastro...';
 
   try {
-    // PASSO 1: Criar o usuário (role: funcionario)
+    // PASSO 1: Criar o usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -175,7 +174,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
 
     msg.innerHTML = '✅ Usuário criado! Cadastrando perfil...';
 
-    // PASSO 2: Cadastrar as informações do funcionário (rota pública)
+    // PASSO 2: Cadastrar informações do funcionário (rota pública)
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
