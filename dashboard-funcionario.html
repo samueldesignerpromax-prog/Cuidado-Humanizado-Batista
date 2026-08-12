@@ -20,6 +20,8 @@
     .dashboard-box .status-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
     .status-ativo { background: #2ecc71; color: #fff; }
     .status-inativo { background: #e74c3c; color: #fff; }
+    .btn-voltar-site { display: inline-block; margin-top: 12px; color: var(--cinza-claro-texto); text-decoration: none; font-size: 0.9rem; text-align: center; }
+    .btn-voltar-site:hover { color: var(--azul-medio); }
   </style>
 </head>
 <body>
@@ -67,6 +69,9 @@
           <div class="info-item" style="grid-column: 1 / -1;"><label>📝 Descrição</label><p id="funcDescricaoDisplay">-</p></div>
         </div>
         <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        <div style="text-align:center; margin-top:12px;">
+          <a href="index.html" class="btn-voltar-site"><i class="fas fa-arrow-left"></i> Voltar ao site</a>
+        </div>
       </div>
     </div>
   </div>
@@ -111,7 +116,7 @@ async function verificarAutenticacao() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   
-  // 🔥 SE NÃO FOR FUNCIONÁRIO, VAI PARA O LOGIN
+  // Se não tiver token ou não for funcionário, vai para o login
   if (!token || user.role !== 'funcionario') {
     window.location.href = 'login-funcionario.html';
     return;
