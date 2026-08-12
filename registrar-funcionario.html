@@ -113,24 +113,105 @@
 
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
+
 document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const nome = document.getElementById('funcNome').value.trim(), email = document.getElementById('funcEmail').value.trim(), senha = document.getElementById('funcSenha').value.trim(), idade = parseInt(document.getElementById('funcIdade').value), telefone = document.getElementById('funcTelefone').value.trim(), especialidade = document.getElementById('funcEspecialidade').value, descricao = document.getElementById('funcDescricao').value.trim();
-  const disponibilidade = { manha: document.getElementById('dispManha').checked, tarde: document.getElementById('dispTarde').checked, noite: document.getElementById('dispNoite').checked, finaisSemana: document.getElementById('dispFimSemana').checked };
-  const msg = document.getElementById('cadastroMensagem'), btn = document.getElementById('btnCadastrar');
-  if (!nome || !email || !senha || !idade || !telefone || !descricao) { msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>'; return; }
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...'; msg.innerHTML = '';
+
+  const nome = document.getElementById('funcNome').value.trim();
+  const email = document.getElementById('funcEmail').value.trim();
+  const senha = document.getElementById('funcSenha').value.trim();
+  const idade = parseInt(document.getElementById('funcIdade').value);
+  const telefone = document.getElementById('funcTelefone').value.trim();
+  const especialidade = document.getElementById('funcEspecialidade').value;
+  const descricao = document.getElementById('funcDescricao').value.trim();
+
+  const disponibilidade = {
+    manha: document.getElementById('dispManha').checked,
+    tarde: document.getElementById('dispTarde').checked,
+    noite: document.getElementById('dispNoite').checked,
+    finaisSemana: document.getElementById('dispFimSemana').checked,
+  };
+
+  const msg = document.getElementById('cadastroMensagem');
+  const btn = document.getElementById('btnCadastrar');
+
+  if (!nome || !email || !senha || !idade || !telefone || !descricao) {
+    msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
+  msg.innerHTML = '';
+
   try {
-    const userRes = await fetch(`${API_URL}/api/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nome, email, password: senha, role: 'funcionario' }) });
+    // 1. Criar usuário (role: funcionario) - SEM TOKEN
+    const userRes = await fetch(`${API_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: nome,
+        email: email,
+        password: senha,
+        role: 'funcionario'
+      })
+    });
     const userData = await userRes.json();
-    if (!userRes.ok) { msg.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`; btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar'; return; }
-    const funcRes = await fetch(`${API_URL}/api/funcionarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }, body: JSON.stringify({ userId: userData.user.id, nomeCompleto: nome, idade, telefone, disponibilidade, descricao, especialidade }) });
+
+    if (!userRes.ok) {
+      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
+    }
+
+    // 2. Cadastrar informações do funcionário - SEM TOKEN (rota pública)
+    const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: userData.user.id,
+        nomeCompleto: nome,
+        idade,
+        telefone,
+        disponibilidade,
+        descricao,
+        especialidade
+      })
+    });
     const funcData = await funcRes.json();
-    if (funcRes.ok) { msg.innerHTML = '<span style="color:#2ecc71;">✅ Cadastro realizado com sucesso! Faça login.</span>'; document.getElementById('cadastroFuncionarioForm').reset(); setTimeout(() => { window.location.href = 'login-funcionario.html'; }, 2000); } else { msg.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`; }
-  } catch (err) { msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>'; } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar'; }
+
+    if (funcRes.ok) {
+      msg.innerHTML = '<span style="color:#2ecc71;">✅ Cadastro realizado com sucesso! Faça login.</span>';
+      document.getElementById('cadastroFuncionarioForm').reset();
+      setTimeout(() => {
+        window.location.href = 'login-funcionario.html';
+      }, 2000);
+    } else {
+      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`;
+    }
+  } catch (err) {
+    console.error('Erro:', err);
+    msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+  }
 });
-const hamburger = document.querySelector('.hamburger'); const navLinks = document.querySelector('.nav-links');
-if (hamburger && navLinks) { hamburger.addEventListener('click', function() { navLinks.classList.toggle('active'); const icon = this.querySelector('i'); if (icon) { icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); } }); }
+
+// Menu mobile
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+    const icon = this.querySelector('i');
+    if (icon) {
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    }
+  });
+}
 </script>
 </body>
 </html>
