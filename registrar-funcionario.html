@@ -117,7 +117,7 @@
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
 
-// ===== CADASTRO DE FUNCIONÁRIO COM LOGIN AUTOMÁTICO =====
+// ===== CADASTRO DE FUNCIONÁRIO =====
 document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -151,7 +151,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '⏳ Criando seu cadastro...';
 
   try {
-    // PASSO 1: Criar o usuário (role: funcionario)
+    // PASSO 1: Criar o usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -174,7 +174,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
 
     msg.innerHTML = '✅ Usuário criado! Cadastrando perfil...';
 
-    // PASSO 2: Cadastrar informações do funcionário (rota pública)
+    // PASSO 2: Cadastrar informações do funcionário
     const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -222,10 +222,8 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     msg.className = 'sucesso';
     msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
 
-    // 🔥 REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO (NUNCA PARA O ADMIN)
-    setTimeout(() => {
-      window.location.href = 'dashboard-funcionario.html';
-    }, 1500);
+    // 🔥 REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
+    window.location.href = 'dashboard-funcionario.html';
 
   } catch (err) {
     console.error('Erro:', err);
