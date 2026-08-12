@@ -105,44 +105,103 @@
 
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
+
+// ===== VERIFICAR AUTENTICAÇÃO =====
 async function verificarAutenticacao() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (!token || user.role !== 'funcionario') { window.location.href = 'login-funcionario.html'; return; }
+  
+  if (!token || user.role !== 'funcionario') {
+    window.location.href = 'login-funcionario.html';
+    return;
+  }
+  
   await carregarPerfil();
 }
+
+// ===== CARREGAR PERFIL =====
 async function carregarPerfil() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
   try {
-    const res = await fetch(`${API_URL}/api/funcionarios`, { headers: { 'Authorization': `Bearer ${token}` } });
+    const res = await fetch(`${API_URL}/api/funcionarios`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
     const data = await res.json();
-    if (res.ok) {
-      const funcionario = data.find(f => f.userId?._id === user.id || f.userId === user.id);
-      if (funcionario) {
-        document.getElementById('funcNomeDisplay').textContent = funcionario.nomeCompleto;
-        document.getElementById('funcEmailDisplay').textContent = user.email;
-        document.getElementById('funcIdadeDisplay').textContent = `${funcionario.idade} anos`;
-        document.getElementById('funcTelefoneDisplay').textContent = funcionario.telefone;
-        const disp = [];
-        if (funcionario.disponibilidade?.manha) disp.push('🌅 Manhã');
-        if (funcionario.disponibilidade?.tarde) disp.push('☀️ Tarde');
-        if (funcionario.disponibilidade?.noite) disp.push('🌙 Noite');
-        if (funcionario.disponibilidade?.finaisSemana) disp.push('📅 FDS');
-        document.getElementById('funcDisponibilidadeDisplay').textContent = disp.length ? disp.join(' / ') : 'Não informado';
-        document.getElementById('funcEspecialidadeDisplay').textContent = funcionario.especialidade || 'Não informada';
-        document.getElementById('funcDescricaoDisplay').textContent = funcionario.descricao || 'Não informada';
-        const statusBadge = document.getElementById('funcStatusBadge');
-        if (funcionario.ativo !== false) { statusBadge.textContent = '✅ Ativo'; statusBadge.className = 'status-badge status-ativo'; } else { statusBadge.textContent = '❌ Inativo'; statusBadge.className = 'status-badge status-inativo'; }
-        document.getElementById('loadingPerfil').style.display = 'none';
-        document.getElementById('perfilContent').style.display = 'block';
-      } else { document.getElementById('loadingPerfil').innerHTML = '<p style="color:#e74c3c;">❌ Perfil não encontrado. Entre em contato com o admin.</p>'; }
-    } else { throw new Error('Erro ao carregar perfil'); }
-  } catch (err) { document.getElementById('loadingPerfil').innerHTML = '<p style="color:#e74c3c;">❌ Erro ao carregar perfil. Tente novamente.</p>'; console.error(err); }
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Erro ao carregar perfil');
+    }
+
+    // Encontra o funcionário com o userId correspondente
+    const funcionario = data.find(f => f.userId?._id === user.id || f.userId === user.id);
+
+    if (!funcionario) {
+      document.getElementById('loadingPerfil').innerHTML = 
+        '<p style="color:#e74c3c;">❌ Perfil não encontrado. Entre em contato com o admin.</p>';
+      return;
+    }
+
+    // Preenche os dados
+    document.getElementById('funcNomeDisplay').textContent = funcionario.nomeCompleto;
+    document.getElementById('funcEmailDisplay').textContent = user.email;
+    document.getElementById('funcIdadeDisplay').textContent = `${funcionario.idade} anos`;
+    document.getElementById('funcTelefoneDisplay').textContent = funcionario.telefone;
+
+    // Disponibilidade
+    const disp = [];
+    if (funcionario.disponibilidade?.manha) disp.push('🌅 Manhã');
+    if (funcionario.disponibilidade?.tarde) disp.push('☀️ Tarde');
+    if (funcionario.disponibilidade?.noite) disp.push('🌙 Noite');
+    if (funcionario.disponibilidade?.finaisSemana) disp.push('📅 FDS');
+    document.getElementById('funcDisponibilidadeDisplay').textContent = disp.length ? disp.join(' / ') : 'Não informado';
+
+    document.getElementById('funcEspecialidadeDisplay').textContent = funcionario.especialidade || 'Não informada';
+    document.getElementById('funcDescricaoDisplay').textContent = funcionario.descricao || 'Não informada';
+
+    // Status
+    const statusBadge = document.getElementById('funcStatusBadge');
+    if (funcionario.ativo !== false) {
+      statusBadge.textContent = '✅ Ativo';
+      statusBadge.className = 'status-badge status-ativo';
+    } else {
+      statusBadge.textContent = '❌ Inativo';
+      statusBadge.className = 'status-badge status-inativo';
+    }
+
+    document.getElementById('loadingPerfil').style.display = 'none';
+    document.getElementById('perfilContent').style.display = 'block';
+
+  } catch (err) {
+    console.error('Erro ao carregar perfil:', err);
+    document.getElementById('loadingPerfil').innerHTML = 
+      `<p style="color:#e74c3c;">❌ Erro ao carregar perfil: ${err.message}. Tente novamente.</p>`;
+  }
 }
-function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = 'login-funcionario.html'; }
-const hamburger = document.querySelector('.hamburger'); const navLinks = document.querySelector('.nav-links');
-if (hamburger && navLinks) { hamburger.addEventListener('click', function() { navLinks.classList.toggle('active'); const icon = this.querySelector('i'); if (icon) { icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); } }); }
+
+// ===== LOGOUT =====
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login-funcionario.html';
+}
+
+// ===== MENU MOBILE =====
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+    const icon = this.querySelector('i');
+    if (icon) {
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    }
+  });
+}
+
+// ===== INICIAR =====
 verificarAutenticacao();
 </script>
 </body>
