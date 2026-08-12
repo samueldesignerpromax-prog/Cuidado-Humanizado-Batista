@@ -3,30 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro Funcionário - Cuidado Humanizado Batista</title>
+  <title>Login Funcionário - Cuidado Humanizado Batista</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .register-box { max-width: 500px; margin: 60px auto; background: var(--branco); padding: 40px; border-radius: var(--border-radius); box-shadow: var(--sombra); }
-    .register-box h2 { color: var(--azul-escuro); text-align: center; }
-    .register-box .subtitle { text-align: center; color: var(--cinza-claro-texto); font-size: 0.9rem; margin-bottom: 24px; }
-    .register-box .form-group { margin-bottom: 16px; }
-    .register-box .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: var(--azul-escuro); }
-    .register-box .form-group input, .register-box .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--cinza-borda); border-radius: 8px; font-size: 1rem; font-family: inherit; }
-    .register-box .form-group input:focus, .register-box .form-group textarea:focus { border-color: var(--azul-medio); outline: none; box-shadow: 0 0 0 3px rgba(41,128,185,0.15); }
-    .register-box .form-group textarea { resize: vertical; min-height: 80px; }
-    .register-box .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .register-box .checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
-    .register-box .checkbox-group label { font-weight: 400; color: var(--cinza-texto); display: flex; align-items: center; gap: 4px; }
-    .register-box .btn-cadastrar { width: 100%; padding: 12px; background: var(--verde-principal); color: var(--branco); border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
-    .register-box .btn-cadastrar:hover { background: #1B5E20; transform: translateY(-2px); }
-    .register-box .btn-cadastrar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .register-box .link-login { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--cinza-claro-texto); }
-    .register-box .link-login a { color: var(--azul-medio); text-decoration: none; font-weight: 600; }
-    #cadastroMensagem { margin-top: 12px; text-align: center; font-weight: 600; }
-    .select-funcionario { width: 100%; padding: 10px 14px; border: 1px solid var(--cinza-borda); border-radius: 8px; font-size: 1rem; background: var(--branco); }
-    .select-funcionario:focus { border-color: var(--azul-medio); outline: none; }
+    .login-box { max-width: 400px; margin: 60px auto; background: var(--branco); padding: 40px; border-radius: var(--border-radius); box-shadow: var(--sombra); }
+    .login-box h2 { color: var(--azul-escuro); text-align: center; }
+    .login-box .subtitle { text-align: center; color: var(--cinza-claro-texto); font-size: 0.9rem; margin-bottom: 24px; }
+    .login-box .form-group { margin-bottom: 16px; }
+    .login-box .form-group label { display: block; font-weight: 600; margin-bottom: 4px; color: var(--azul-escuro); }
+    .login-box .form-group input { width: 100%; padding: 10px 14px; border: 1px solid var(--cinza-borda); border-radius: 8px; font-size: 1rem; }
+    .login-box .form-group input:focus { border-color: var(--azul-medio); outline: none; box-shadow: 0 0 0 3px rgba(41,128,185,0.15); }
+    .login-box .btn-login { width: 100%; padding: 12px; background: var(--azul-medio); color: var(--branco); border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+    .login-box .btn-login:hover { background: var(--azul-escuro); transform: translateY(-2px); }
+    .login-box .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .login-box .link-register { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--cinza-claro-texto); }
+    .login-box .link-register a { color: var(--azul-medio); text-decoration: none; font-weight: 600; }
+    #loginMensagem { margin-top: 12px; text-align: center; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -56,26 +50,16 @@
 
 <section style="padding: 120px 0 60px; min-height: 70vh;">
   <div class="container">
-    <div class="register-box">
-      <h2>📝 Cadastro de Funcionário</h2>
-      <p class="subtitle">Preencha seus dados para se cadastrar</p>
-      <form id="cadastroFuncionarioForm">
-        <div class="form-group"><label>Nome completo</label><input type="text" id="funcNome" placeholder="Seu nome completo" required></div>
-        <div class="form-row">
-          <div class="form-group"><label>E-mail</label><input type="email" id="funcEmail" placeholder="seu@email.com" required></div>
-          <div class="form-group"><label>Senha</label><input type="password" id="funcSenha" placeholder="********" required></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Idade</label><input type="number" id="funcIdade" placeholder="25" required></div>
-          <div class="form-group"><label>Telefone</label><input type="text" id="funcTelefone" placeholder="(11) 99999-9999" required></div>
-        </div>
-        <div class="form-group"><label>Disponibilidade</label><div class="checkbox-group"><label><input type="checkbox" id="dispManha" value="manha"> 🌅 Manhã</label><label><input type="checkbox" id="dispTarde" value="tarde"> ☀️ Tarde</label><label><input type="checkbox" id="dispNoite" value="noite"> 🌙 Noite</label><label><input type="checkbox" id="dispFimSemana" value="fimSemana"> 📅 Fins de semana</label></div></div>
-        <div class="form-group"><label>Especialidade</label><select id="funcEspecialidade" class="select-funcionario"><option value="">Selecione...</option><option value="Cuidador de Idosos">Cuidador de Idosos</option><option value="Técnico de Enfermagem">Técnico de Enfermagem</option><option value="Enfermeiro(a)">Enfermeiro(a)</option><option value="Fisioterapeuta">Fisioterapeuta</option><option value="Nutricionista">Nutricionista</option><option value="Fonoaudiólogo(a)">Fonoaudiólogo(a)</option><option value="Psicólogo(a)">Psicólogo(a)</option><option value="Auxiliar de Saúde">Auxiliar de Saúde</option><option value="Outro">Outro</option></select></div>
-        <div class="form-group"><label>Breve descrição sobre você</label><textarea id="funcDescricao" placeholder="Conte um pouco sobre sua experiência..." required></textarea></div>
-        <button type="submit" class="btn-cadastrar" id="btnCadastrar"><i class="fas fa-user-plus"></i> Cadastrar</button>
-        <div id="cadastroMensagem"></div>
+    <div class="login-box">
+      <h2>👤 Login Funcionário</h2>
+      <p class="subtitle">Acesse sua área pessoal</p>
+      <form id="loginFuncionarioForm">
+        <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail" placeholder="seu@email.com" required></div>
+        <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" placeholder="********" required></div>
+        <button type="submit" class="btn-login" id="btnLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+        <div id="loginMensagem"></div>
       </form>
-      <div class="link-login"><a href="login-funcionario.html">← Já tem conta? Faça login</a></div>
+      <div class="link-register"><a href="registrar-funcionario.html">Ainda não tem conta? Cadastre-se</a></div>
     </div>
   </div>
 </section>
@@ -104,7 +88,7 @@
 </footer>
 
 <div class="whatsapp-float-container">
-  <a href="https://wa.me/5511968090892" target="_blank" class="whatsapp-float danielly" style="background-color: #128C7E; border: 2px solid #5DADE2;"><i class="fab fa-whatsapp"></i><span class="label" style="background: #5DADE2; color: #fff;">Danielly</span></a>
+  <a href="https://wa.me/5511968090892" target="_blank" class="whatsapp-float danielly" style="background-color: #128C7E; border: 2px solid #5DADE2;"><i class="fab fa-whatsapp"></i><span class="label" style="background: #5DADE2; color: #fff;">Danielly (Principal)</span></a>
   <a href="https://wa.me/5511913031275" target="_blank" class="whatsapp-float samuel"><i class="fab fa-whatsapp"></i><span class="label">Samuel</span></a>
   <a href="https://wa.me/5511991940004" target="_blank" class="whatsapp-float agencia" style="background-color: #34B7F1;"><i class="fab fa-whatsapp"></i><span class="label">Agência</span></a>
 </div>
@@ -113,125 +97,19 @@
 
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
-
-document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
+document.getElementById('loginFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-
-  const nome = document.getElementById('funcNome').value.trim();
-  const email = document.getElementById('funcEmail').value.trim();
-  const senha = document.getElementById('funcSenha').value.trim();
-  const idade = parseInt(document.getElementById('funcIdade').value);
-  const telefone = document.getElementById('funcTelefone').value.trim();
-  const especialidade = document.getElementById('funcEspecialidade').value;
-  const descricao = document.getElementById('funcDescricao').value.trim();
-
-  const disponibilidade = {
-    manha: document.getElementById('dispManha').checked,
-    tarde: document.getElementById('dispTarde').checked,
-    noite: document.getElementById('dispNoite').checked,
-    finaisSemana: document.getElementById('dispFimSemana').checked,
-  };
-
-  const msg = document.getElementById('cadastroMensagem');
-  const btn = document.getElementById('btnCadastrar');
-
-  if (!nome || !email || !senha || !idade || !telefone || !descricao) {
-    msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
-  msg.innerHTML = '';
-
+  const email = document.getElementById('loginEmail').value.trim(), password = document.getElementById('loginPassword').value.trim(), msg = document.getElementById('loginMensagem'), btn = document.getElementById('btnLogin');
+  if (!email || !password) { msg.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos.</span>'; return; }
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...'; msg.innerHTML = '';
   try {
-    // PASSO 1: Criar o usuário com role: funcionario
-    const userRes = await fetch(`${API_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: nome,
-        email: email,
-        password: senha,
-        role: 'funcionario'
-      })
-    });
-    const userData = await userRes.json();
-
-    if (!userRes.ok) {
-      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`;
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
-      return;
-    }
-
-    // PASSO 2: Fazer login para obter o token
-    const loginRes = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: senha })
-    });
-    const loginData = await loginRes.json();
-
-    if (!loginRes.ok) {
-      msg.innerHTML = `<span style="color:#e74c3c;">❌ Erro ao fazer login: ${loginData.message}</span>`;
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
-      return;
-    }
-
-    const token = loginData.token;
-
-    // PASSO 3: Cadastrar informações do funcionário
-    const funcRes = await fetch(`${API_URL}/api/funcionarios`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        userId: userData.user.id,
-        nomeCompleto: nome,
-        idade,
-        telefone,
-        disponibilidade,
-        descricao,
-        especialidade
-      })
-    });
-    const funcData = await funcRes.json();
-
-    if (funcRes.ok) {
-      msg.innerHTML = '<span style="color:#2ecc71;">✅ Cadastro realizado com sucesso! Faça login.</span>';
-      document.getElementById('cadastroFuncionarioForm').reset();
-      setTimeout(() => {
-        window.location.href = 'login-funcionario.html';
-      }, 2000);
-    } else {
-      msg.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`;
-    }
-  } catch (err) {
-    console.error('Erro:', err);
-    msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
-  }
+    const res = await fetch(`${API_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+    const data = await res.json();
+    if (res.ok) { localStorage.setItem('token', data.token); localStorage.setItem('user', JSON.stringify(data.user)); msg.innerHTML = '<span style="color:#2ecc71;">✅ Login bem-sucedido!</span>'; setTimeout(() => { window.location.href = 'dashboard-funcionario.html'; }, 1000); } else { msg.innerHTML = `<span style="color:#e74c3c;">❌ ${data.message || 'Erro no login'}</span>`; }
+  } catch (err) { msg.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao conectar com a API</span>'; } finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar'; }
 });
-
-// Menu mobile
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
-if (hamburger && navLinks) {
-  hamburger.addEventListener('click', function() {
-    navLinks.classList.toggle('active');
-    const icon = this.querySelector('i');
-    if (icon) {
-      icon.classList.toggle('fa-bars');
-      icon.classList.toggle('fa-times');
-    }
-  });
-}
+const hamburger = document.querySelector('.hamburger'); const navLinks = document.querySelector('.nav-links');
+if (hamburger && navLinks) { hamburger.addEventListener('click', function() { navLinks.classList.toggle('active'); const icon = this.querySelector('i'); if (icon) { icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); } }); }
 </script>
 </body>
 </html>
