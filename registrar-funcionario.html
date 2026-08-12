@@ -145,7 +145,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '';
 
   try {
-    // 1. Criar usuário (role: funcionario) - SEM TOKEN
+    // PASSO 1: Criar o usuário
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -165,10 +165,30 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
       return;
     }
 
-    // 2. Cadastrar informações do funcionário - SEM TOKEN (rota pública)
-    const funcRes = await fetch(`${API_URL}/api/funcionarios/public`, {
+    // PASSO 2: Fazer login para obter o token
+    const loginRes = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha })
+    });
+    const loginData = await loginRes.json();
+
+    if (!loginRes.ok) {
+      msg.innerHTML = `<span style="color:#e74c3c;">❌ Erro ao fazer login: ${loginData.message}</span>`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-user-plus"></i> Cadastrar';
+      return;
+    }
+
+    const token = loginData.token;
+
+    // PASSO 3: Cadastrar informações do funcionário (COM TOKEN)
+    const funcRes = await fetch(`${API_URL}/api/funcionarios`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         userId: userData.user.id,
         nomeCompleto: nome,
