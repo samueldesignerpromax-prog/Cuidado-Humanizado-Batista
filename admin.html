@@ -136,20 +136,20 @@
       <div id="tab-cadastrar" class="tab-content">
         <div class="card" style="max-width:600px;">
           <h3 style="color:var(--azul-escuro);">➕ Cadastrar Funcionário</h3>
-          <form id="cadastroFuncionarioForm">
-            <div class="form-group"><label>Nome completo</label><input type="text" id="funcNome" required></div>
-            <div class="form-group"><label>E-mail</label><input type="email" id="funcEmail" required></div>
-            <div class="form-group"><label>Senha</label><input type="text" id="funcSenha" required></div>
+          <form id="cadastroFuncionarioFormAdmin">
+            <div class="form-group"><label>Nome completo</label><input type="text" id="funcNomeAdmin" required></div>
+            <div class="form-group"><label>E-mail</label><input type="email" id="funcEmailAdmin" required></div>
+            <div class="form-group"><label>Senha</label><input type="text" id="funcSenhaAdmin" required></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div class="form-group"><label>Idade</label><input type="number" id="funcIdade" required></div>
-              <div class="form-group"><label>Telefone</label><input type="text" id="funcTelefone" required></div>
+              <div class="form-group"><label>Idade</label><input type="number" id="funcIdadeAdmin" required></div>
+              <div class="form-group"><label>Telefone</label><input type="text" id="funcTelefoneAdmin" required></div>
             </div>
-            <div class="form-group"><label>Disponibilidade</label><div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;"><label><input type="checkbox" id="dispManha" value="manha"> Manhã</label><label><input type="checkbox" id="dispTarde" value="tarde"> Tarde</label><label><input type="checkbox" id="dispNoite" value="noite"> Noite</label><label><input type="checkbox" id="dispFimSemana" value="fimSemana"> Fins de semana</label></div></div>
-            <div class="form-group"><label>Descrição</label><textarea id="funcDescricao" rows="3" placeholder="Breve descrição..." required></textarea></div>
-            <div class="form-group"><label>Especialidade</label><input type="text" id="funcEspecialidade" placeholder="Ex: Cuidador de idosos..."></div>
-            <button type="submit" class="btn btn-primario">Cadastrar Funcionário</button>
+            <div class="form-group"><label>Disponibilidade</label><div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;"><label><input type="checkbox" id="dispManhaAdmin" value="manha"> Manhã</label><label><input type="checkbox" id="dispTardeAdmin" value="tarde"> Tarde</label><label><input type="checkbox" id="dispNoiteAdmin" value="noite"> Noite</label><label><input type="checkbox" id="dispFimSemanaAdmin" value="fimSemana"> Fins de semana</label></div></div>
+            <div class="form-group"><label>Descrição</label><textarea id="funcDescricaoAdmin" rows="3" placeholder="Breve descrição..." required></textarea></div>
+            <div class="form-group"><label>Especialidade</label><input type="text" id="funcEspecialidadeAdmin" placeholder="Ex: Cuidador de idosos..."></div>
+            <button type="submit" class="btn btn-primario" id="btnCadastrarAdmin">Cadastrar Funcionário</button>
           </form>
-          <div id="cadastroMensagem" style="margin-top:12px;"></div>
+          <div id="cadastroMensagemAdmin" style="margin-top:12px;"></div>
         </div>
       </div>
     </div>
@@ -190,7 +190,7 @@
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
 
-// Verificar API
+// ===== VERIFICAR API =====
 async function verificarAPI() {
   const statusEl = document.getElementById('apiStatus');
   try {
@@ -200,7 +200,7 @@ async function verificarAPI() {
 }
 verificarAPI();
 
-// Login
+// ===== LOGIN =====
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value.trim();
@@ -220,6 +220,7 @@ function checkAuth() { const token = localStorage.getItem('token'); if (token) m
 function mostrarDashboard() { document.getElementById('loginPanel').style.display = 'none'; document.getElementById('dashboardPanel').classList.add('active'); const user = JSON.parse(localStorage.getItem('user') || '{}'); document.getElementById('adminName').textContent = `👋 ${user.name || 'Admin'}`; carregarDados(); }
 function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); location.reload(); }
 
+// ===== CARREGAR DADOS =====
 async function carregarDados() {
   const token = localStorage.getItem('token'); if (!token) return;
   try {
@@ -245,24 +246,87 @@ function renderFuncionarios(funcionarios) {
 async function marcarLida(id) { const token = localStorage.getItem('token'); try { await fetch(`${API_URL}/api/mensagens/${id}/lida`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } }); carregarDados(); } catch { alert('Erro ao marcar mensagem'); } }
 async function toggleFuncionario(id) { const token = localStorage.getItem('token'); try { await fetch(`${API_URL}/api/funcionarios/${id}/toggle`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } }); carregarDados(); } catch { alert('Erro ao alterar status'); } }
 
-document.getElementById('cadastroFuncionarioForm').addEventListener('submit', async (e) => {
+// ===== CADASTRAR FUNCIONÁRIO (NO ADMIN) =====
+document.getElementById('cadastroFuncionarioFormAdmin').addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const token = localStorage.getItem('token');
-  const msgDiv = document.getElementById('cadastroMensagem');
-  const nome = document.getElementById('funcNome').value.trim(), email = document.getElementById('funcEmail').value.trim(), senha = document.getElementById('funcSenha').value.trim(), idade = parseInt(document.getElementById('funcIdade').value), telefone = document.getElementById('funcTelefone').value.trim(), descricao = document.getElementById('funcDescricao').value.trim(), especialidade = document.getElementById('funcEspecialidade').value.trim();
-  if (!nome || !email || !senha || !idade || !telefone || !descricao) { msgDiv.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>'; return; }
-  const disponibilidade = { manha: document.getElementById('dispManha').checked, tarde: document.getElementById('dispTarde').checked, noite: document.getElementById('dispNoite').checked, finaisSemana: document.getElementById('dispFimSemana').checked };
+  const msgDiv = document.getElementById('cadastroMensagemAdmin');
+
+  const nome = document.getElementById('funcNomeAdmin').value.trim();
+  const email = document.getElementById('funcEmailAdmin').value.trim();
+  const senha = document.getElementById('funcSenhaAdmin').value.trim();
+  const idade = parseInt(document.getElementById('funcIdadeAdmin').value);
+  const telefone = document.getElementById('funcTelefoneAdmin').value.trim();
+  const descricao = document.getElementById('funcDescricaoAdmin').value.trim();
+  const especialidade = document.getElementById('funcEspecialidadeAdmin').value.trim();
+
+  const disponibilidade = {
+    manha: document.getElementById('dispManhaAdmin').checked,
+    tarde: document.getElementById('dispTardeAdmin').checked,
+    noite: document.getElementById('dispNoiteAdmin').checked,
+    finaisSemana: document.getElementById('dispFimSemanaAdmin').checked,
+  };
+
+  if (!nome || !email || !senha || !idade || !telefone || !descricao) {
+    msgDiv.innerHTML = '<span style="color:#e74c3c;">⚠️ Preencha todos os campos obrigatórios.</span>';
+    return;
+  }
+
   try {
-    const userRes = await fetch(`${API_URL}/api/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ name: nome, email, password: senha, role: 'funcionario' }) });
+    // 1. Criar o usuário com role: funcionario
+    const userRes = await fetch(`${API_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ name: nome, email, password: senha, role: 'funcionario' })
+    });
     const userData = await userRes.json();
-    if (!userRes.ok) { msgDiv.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`; return; }
-    const funcRes = await fetch(`${API_URL}/api/funcionarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ userId: userData.user.id, nomeCompleto: nome, idade, telefone, disponibilidade, descricao, especialidade }) });
+
+    if (!userRes.ok) {
+      msgDiv.innerHTML = `<span style="color:#e74c3c;">❌ ${userData.message || userData.error}</span>`;
+      return;
+    }
+
+    // 2. Cadastrar informações do funcionário
+    const funcRes = await fetch(`${API_URL}/api/funcionarios`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        userId: userData.user.id,
+        nomeCompleto: nome,
+        idade,
+        telefone,
+        disponibilidade,
+        descricao,
+        especialidade
+      })
+    });
     const funcData = await funcRes.json();
-    if (funcRes.ok) { msgDiv.innerHTML = '<span style="color:#2ecc71;">✅ Funcionário cadastrado com sucesso!</span>'; document.getElementById('cadastroFuncionarioForm').reset(); carregarDados(); } else { msgDiv.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`; }
-  } catch (err) { msgDiv.innerHTML = `<span style="color:#e74c3c;">❌ Erro ao cadastrar: ${err.message}</span>`; }
+
+    if (funcRes.ok) {
+      msgDiv.innerHTML = '<span style="color:#2ecc71;">✅ Funcionário cadastrado com sucesso!</span>';
+      document.getElementById('cadastroFuncionarioFormAdmin').reset();
+      carregarDados();
+    } else {
+      msgDiv.innerHTML = `<span style="color:#e74c3c;">❌ ${funcData.message || funcData.error}</span>`;
+    }
+  } catch (err) {
+    console.error('Erro:', err);
+    msgDiv.innerHTML = '<span style="color:#e74c3c;">❌ Erro ao cadastrar. Tente novamente.</span>';
+  }
 });
 
-document.querySelectorAll('.tabs button').forEach(btn => { btn.addEventListener('click', function() { document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active')); this.classList.add('active'); const tab = this.dataset.tab; document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); }); });
+// ===== ABAS =====
+document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const tab = this.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+  });
+});
+
 checkAuth();
 </script>
 </body>
