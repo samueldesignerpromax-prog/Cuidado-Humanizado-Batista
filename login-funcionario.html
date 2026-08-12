@@ -21,8 +21,6 @@
     .login-box .link-register { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--cinza-claro-texto); }
     .login-box .link-register a { color: var(--azul-medio); text-decoration: none; font-weight: 600; }
     #loginMensagem { margin-top: 12px; text-align: center; font-weight: 600; }
-    .btn-voltar { display: inline-block; margin-top: 12px; color: var(--cinza-claro-texto); text-decoration: none; font-size: 0.9rem; }
-    .btn-voltar:hover { color: var(--azul-medio); }
   </style>
 </head>
 <body>
@@ -71,9 +69,6 @@
       <div class="link-register">
         <a href="registrar-funcionario.html">Ainda não tem conta? Cadastre-se</a>
       </div>
-      <div style="text-align:center; margin-top:12px;">
-        <a href="index.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar ao site</a>
-      </div>
     </div>
   </div>
 </section>
@@ -112,6 +107,7 @@
 <script>
 const API_URL = 'https://backend-cuidado-humanizado.onrender.com';
 
+// ===== LOGIN FUNCIONÁRIO =====
 document.getElementById('loginFuncionarioForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -149,6 +145,8 @@ document.getElementById('loginFuncionarioForm').addEventListener('submit', async
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       msg.innerHTML = '<span style="color:#2ecc71;">✅ Login bem-sucedido!</span>';
+
+      // 🔥 REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
       setTimeout(() => {
         window.location.href = 'dashboard-funcionario.html';
       }, 1000);
