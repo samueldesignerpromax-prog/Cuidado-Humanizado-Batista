@@ -151,7 +151,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
   msg.innerHTML = '⏳ Criando seu cadastro...';
 
   try {
-    // PASSO 1: Criar o usuário
+    // PASSO 1: Criar o usuário (role: funcionario)
     const userRes = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -222,7 +222,7 @@ document.getElementById('cadastroFuncionarioForm').addEventListener('submit', as
     msg.className = 'sucesso';
     msg.innerHTML = '✅ Cadastro e login realizados com sucesso!';
 
-    // REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO
+    // 🔥 REDIRECIONA PARA O DASHBOARD DO FUNCIONÁRIO (NUNCA PARA O ADMIN)
     setTimeout(() => {
       window.location.href = 'dashboard-funcionario.html';
     }, 1500);
